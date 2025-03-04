@@ -385,7 +385,7 @@ tls:
   zookeeper:
     ## @param tls.zookeeper.enabled Enable TLS for Zookeeper client connections.
     ##
-    enabled: false
+    enabled: true   ### 수정 ###
     ## @param tls.zookeeper.verifyHostname Hostname validation.
     ##
     verifyHostname: true
@@ -509,7 +509,7 @@ controller:
   ## This allows configuring both kraft and zookeeper modes simultaneously in order to perform the migration of the Kafka metadata.
   ## Ref. https://docs.confluent.io/platform/current/installation/migrate-zk-kraft.html
   ##
-  zookeeperMigrationMode: false
+  zookeeperMigrationMode: true   ### 수정 ###
   ## @param controller.config Configuration file for Kafka controller-eligible nodes, rendered as a template. Auto-generated based on chart values when not specified.
   ## @param controller.existingConfigmap ConfigMap with Kafka Configuration for controller-eligible nodes.
   ## NOTE: This will override the configuration based on values, please act carefully
@@ -891,7 +891,7 @@ controller:
     ## If undefined (the default) or set to null, no storageClassName spec is
     ## set, choosing the default provisioner.
     ##
-    storageClass: ""
+    storageClass: "kafka-ebs-sc"   ### 수정 ###
     ## @param controller.persistence.accessModes Persistent Volume Access Modes
     ##
     accessModes:
@@ -967,7 +967,7 @@ broker:
   ## This allows configuring both kraft and zookeeper modes simultaneously in order to perform the migration of the Kafka metadata.
   ## Ref. https://docs.confluent.io/platform/current/installation/migrate-zk-kraft.html
   ##
-  zookeeperMigrationMode: false
+  zookeeperMigrationMode: true   ### 수정 ###
   ## @param broker.config Configuration file for Kafka broker-only nodes, rendered as a template. Auto-generated based on chart values when not specified.
   ## @param broker.existingConfigmap ConfigMap with Kafka Configuration for broker-only nodes.
   ## NOTE: This will override the configuration based on values, please act carefully
@@ -1348,7 +1348,7 @@ broker:
     ## If undefined (the default) or set to null, no storageClassName spec is
     ## set, choosing the default provisioner.
     ##
-    storageClass: ""
+    storageClass: "kafka-ebs-sc"
     ## @param broker.persistence.accessModes Persistent Volume Access Modes
     ##
     accessModes:
@@ -1388,7 +1388,7 @@ broker:
     ## If undefined (the default) or set to null, no storageClassName spec is
     ## set, choosing the default provisioner.
     ##
-    storageClass: ""
+    storageClass: "kafka-ebs-sc"
     ## @param broker.logPersistence.accessModes Persistent Volume Access Modes
     ##
     accessModes:
