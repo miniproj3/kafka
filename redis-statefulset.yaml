@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: redis
+  namespace: kafka
+spec:
+  serviceName: redis
+  replicas: 1  # 하나의 Redis Pod만 생성
+  selector:
+    matchLabels:
+      app: redis
+  template:
+    metadata:
+      labels:
+        app: redis
+    spec:
+      containers:
+        - name: redis
+          image: redis:latest
+          ports:
+            - containerPort: 6379
+          volumeMounts:
+            - name: redis-storage
+              mountPath: /data  # Redis 데이터 저장 경로
+  volumeClaimTemplates:  # 볼륨 직접 연결하는게 아니라 PVC로 연결함
+    - metadata:
+        name: redis-storage
+      spec:
+        storageClassName: redis-ebs-sc  # 위에서 만든 StorageClass 사용
+        accessModes:
+          - ReadWriteOnce  # EBS는 한 Pod에서만 사용 가능
+        resources:
+          requests:
+            storage: 3Gi  # 원하는 스토리지 크기

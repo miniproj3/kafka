@@ -1,0 +1,60 @@
+apiVersion: kafka.strimzi.io/v1beta2
+kind: Kafka
+metadata:
+  name: kafka-strimzi-cluster
+  namespace: stockstalk
+spec:
+  kafka:
+    version: 3.9.0
+    replicas: 3
+    listeners:
+      - name: plain
+        port: 9092
+        type: internal
+        tls: false
+    config:
+      offsets.topic.replication.factor: 3 # 프로덕션 환경에 적합하게 수정
+      transaction.state.log.replication.factor: 3 # 프로덕션 환경에 적합하게 수정
+      transaction.state.log.min.isr: 2 # 프로덕션 환경에 적합하게 수정
+      default.replication.factor: 3 # 프로덕션 환경에 적합하게 수정
+      min.insync.replicas: 2 # 프로덕션 환경에 적합하게 수정
+      log.level: "INFO"  # 전체 로그 레벨 설정
+      # 특정 로거에 대한 세부 설정
+      log4j.logger.org.apache.zookeeper: "WARN"
+      log4j.logger.org.I0Itec.zkclient: "WARN"
+      log4j.logger.org.apache.kafka: "INFO"
+      log4j.logger.kafka: "INFO"
+      log4j.logger.state.change.logger: "TRACE"
+      log4j.logger.kafka.request.logger: "WARN"
+      log.retention.hours: 168  # 7일간 로그 보존
+      log.retention.bytes: 1073741824  # 1GB 이상 로그 보존하지 않음
+      log.segment.bytes: 1073741824  # 로그 세그먼트 크기 1GB
+      log.cleanup.policy: delete,compact  # 오래된 로그 삭제 및 압축
+      compression.type: lz4  # 로그 압축 활성화
+      auto.create.topics.enable: false  # 토픽 자동 생성 비활성화
+      delete.topic.enable: true  # 토픽 삭제 활성화
+    metricsConfig:
+      type: jmxPrometheusExporter
+      valueFrom:
+        configMapKeyRef:
+          name: kafka-metrics
+          key: kafka-metrics-config.yml
+    storage:
+      type: jbod
+      volumes:
+      - id: 0
+        type: persistent-claim
+        size: 10Gi # 프로덕션 환경에 적합하게 크기 증가
+        deleteClaim: false 
+        class: kafka-ebs-sc 
+  zookeeper:
+    replicas: 3
+    storage:
+      type: persistent-claim 
+      size: 5Gi # 프로덕션 환경에 적합하게 크기 증가
+      deleteClaim: false 
+      class: zookeeper-ebs-sc 
+  entityOperator:
+    topicOperator: {}
+    userOperator: {}
+  cruiseControl: {}
